@@ -1,0 +1,11 @@
+{
+  "name": "place_clone",
+  "version": "1.0.0",
+  "description": "clone for the reddit 1st of april joke /r/place",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

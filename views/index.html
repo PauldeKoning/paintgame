@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <title>Index</title>
+</head>
+<body>
+<div class="container">
+    <div class="container" style="margin-bottom: 20px;">
+        <div class="form-group">
+            <label for="inputjoin">What game do you want to join?</label>
+            <input type="number" class="form-control" id="inputjoin" aria-describedby="emailHelp" placeholder="Enter game number">
+        </div>
+        <button id="buttonjoin" class="btn btn-primary" onclick="joinGame()">Enter Game</button>
+    </div>
+    <div class="container">
+        <button id="buttoncreate" class="btn btn-primary" onclick="createGame()">Create Game</button>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+    var socket = io.connect();
+    socket.on('server_join_game_link', function(data) {
+        if(data.status == "success") {
+            location.href = data.link;
+        } else if(data.status == "error") {
+            alert(data.message);
+            enableButtons();
+        }
+    });
+
+    function createGame() {
+        disableButtons();
+        socket.emit('client_create_game');
+    }
+
+    function joinGame() {
+        disableButtons();
+        socket.emit('client_join_game', $('#inputjoin').val());
+    }
+
+    function disableButtons() {
+        $('#buttoncreate').prop('disabled', true);
+        $('#buttonjoin').prop('disabled', true);
+    }
+
+    function enableButtons() {
+        $('#buttoncreate').prop('disabled', false);
+        $('#buttonjoin').prop('disabled', false);
+    }
+
+    test = new Game();
+
+    function Game() {
+        this.id = 1;
+        this.objects = {};
+        this.players = [];
+        this.currentDrawer = {};
+        this.drawTimer = 0;
+    }
+</script>
