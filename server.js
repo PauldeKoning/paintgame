@@ -7,7 +7,7 @@ var http = require('http');
 var fileExists = require('file-exists');
 var server = http.createServer(app);
 var io = require('socket.io')(server);
-var port = 80;
+var port = 255;
 var games = [];
 
 app.use('/css', express.static(__dirname + '/css'));
@@ -34,7 +34,7 @@ console.log("Server is listening on port: " + port);
 
 
 io.on('connection', function(client) {
-    client.on('client_create_game', function(data) {
+    client.on('client_create_game', function() {
         games.push(new Game());
         io.to(client.id).emit('server_join_game_link', {"status" : "success", "link" : "/game.html?id=" + (games.length - 1)});
         console.log("New Game Made");
@@ -60,8 +60,18 @@ io.on('connection', function(client) {
         joined = 0;
         for (i = 0; i < games.length; i++) {
             if (games[i].id == data.gameid) {
-                games[i].players.push({"clientid" : client.id, "username" : data.username});
-                console.log("User Joined Game");
+                usernameTaken = 0;
+                for(j = 0; j < games[i].players.length; j++) {
+                    if(games[i].players[j].username == data.username) {
+                        usernameTaken = 1;
+                    }
+                }
+                if(usernameTaken == 0) {
+                    games[i].players.push({"clientid" : client.id, "username" : data.username, "status" : "Waiting"});
+                    console.log("User Joined Game");
+                } else {
+                    io.to(client.id).emit('server_send_error', {"message": "Username is already taken..."});
+                }
                 joined = 1;
             }
         }
@@ -113,6 +123,30 @@ io.on('connection', function(client) {
             }
         }
     });
+    client.on('client_send_message', function(data) {
+        for (i = 0; i < games.length; i++) {
+            if (games[i].id == data.gameid) {
+                var username = "ERROR";
+                for(j = 0; j < games[i].players.length; j++) {
+                    if(games[i].players[j].clientid == client.id) {
+                        username = games[i].players[j].username;
+                    }
+                }
+                for(j = 0; j < games[i].players.length; j++) {
+                    io.to(games[i].players[j].clientid).emit('server_send_message', {"username" : username, "message" : data.message});
+                }
+            }
+        }
+    });
+    client.on('disconnect', function() {
+        for (i = 0; i < games.length; i++) {
+            for(j = 0; j < games[i].players.length; j++) {
+                if(games[i].players[j].clientid == client.id) {
+                    games[i].players.splice(j, 1);
+                }
+            }
+        }
+    });
 });
 
 function sendInformationAndUpdate() {
@@ -120,23 +154,34 @@ function sendInformationAndUpdate() {
         if(games[i].currentDrawer.username == "none") {
             if(games[i].players.length > 0) {
                 games[i].currentDrawer = games[i].players[0];
+                games[i].players[0].status = "Drawing";
                 games[i].lastPlayer = 0;
             }
         }
+        var nextTurn = 0;
         if(games[i].drawTimer >= 10) {
-            if(games[i].lastPlayer !== games[i].players.length - 1) {
-                games[i].lastPlayer++;
-                games[i].currentDrawer = games[i].players[games[i].lastPlayer];
-            } else {
+            nextTurn = 1;
+            if(games[i].currentDrawer.clientid == games[i].players[games[i].players.length - 1].clientid) {
                 games[i].lastPlayer = 0;
-                games[i].currentDrawer = games[i].players[games[i].lastPlayer];
+            } else {
+                games[i].lastPlayer++;
             }
+            games[i].currentDrawer = games[i].players[games[i].lastPlayer];
+            games[i].players[games[i].lastPlayer].status = "Drawing";
             games[i].drawTimer = 0;
         }
         games[i].drawTimer++;
 
         for(j = 0; j < games[i].players.length; j++) {
-            io.to(games[i].players[j].clientid).emit('server_send_information', {"currentDrawer" : games[i].currentDrawer.username, "timeLeft" : games[i].drawTimer});
+            if(games[i].players[j].username !== games[i].currentDrawer.username) {
+                games[i].players[j].status = "Guessing"
+            }
+            io.to(games[i].players[j].clientid).emit('server_send_information',
+                {"currentDrawer" : games[i].currentDrawer.username,
+                    "timeLeft" : games[i].drawTimer,
+                    "nextTurn" : nextTurn,
+                    "players" : games[i].players
+                });
         }
     }
 }
