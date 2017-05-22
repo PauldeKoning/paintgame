@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/game.css" rel="stylesheet">
     <script src="js/easeljs.combined.js"></script>
     <script src="js/jquery-3.1.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -10,8 +11,37 @@
     <title>Index</title>
 </head>
 <body>
-
-    <canvas id="canvas" width="500" height="500" style="border: 1px solid black;"></canvas>
+    <div class="container-fluid" >
+        <div class="row" style="margin: auto auto">
+            <div class="canheight col-sm-2" id="colorsDiv" style="border: 1px solid black; padding: 0; text-align: center;">
+                <h2 style="margin: 0; border-bottom: 1px solid black">Color</h2>
+                <div class="col-sm-12" onclick="changeColor('black')" style="border-bottom: 1px solid black; background-color: black; height: 70px;"></div>
+                <div class="col-sm-12" onclick="changeColor('red')" style="border-bottom: 1px solid black; background-color: red; height: 70px;"></div>
+                <div class="col-sm-12" onclick="changeColor('green')" style="border-bottom: 1px solid black; background-color: green; height: 70px;"></div>
+                <div class="col-sm-12" onclick="changeColor('blue')" style="border-bottom: 1px solid black; background-color: blue; height: 70px;"></div>
+                <div class="col-sm-12" onclick="changeColor('yellow')" style="border-bottom: 1px solid black; background-color: yellow; height: 70px;"></div>
+                <div class="col-sm-12" onclick="changeColor('sandybrown')" style="border-bottom: 1px solid black; background-color: sandybrown; height: 70px;"></div>
+                <div class="col-sm-12" onclick="changeColor('brown')" style="border-bottom: 1px solid black; background-color: brown; height: 70px;"></div>
+                <div class="col-sm-12" onclick="changeColor('white')" style="height: 75px;"><h2>Eraser</h2></div>
+            </div>
+            <div class="colcanvas col-sm-8"><canvas id="canvas" height="600" width="600"></canvas></div>
+            <div class="canheight col-sm-2 playerdiv" style="border: 1px solid black; padding: 0; text-align: center;">
+                <div class="players">
+                    <h2 style="margin: 0; border-bottom: 1px solid black">Players</h2>
+                    <div class="col-sm-12" style="border-bottom: 1px solid black">Iwon8<br><span style="font-weight: bold;">Status:</span> Drawing</div>
+                    <div class="col-sm-12" style="border-bottom: 1px solid black">Iwon8<br><span style="font-weight: bold;">Status:</span> Drawing</div>
+                    <div class="col-sm-12" style="border-bottom: 1px solid black">Iwon8<br><span style="font-weight: bold;">Status:</span> Drawing</div>
+                    <div class="col-sm-12" style="border-bottom: 1px solid black">Iwon8<br><span style="font-weight: bold;">Status:</span> Drawing</div>
+                    <div class="col-sm-12" style="border-bottom: 1px solid black">Iwon8<br><span style="font-weight: bold;">Status:</span> Drawing</div>
+                    <div class="col-sm-12" style="border-bottom: 1px solid black">Iwon8<br><span style="font-weight: bold;">Status:</span> Drawing</div>
+                </div>
+                <div class="chat" style="text-align: left; border-top: 1px solid black; border-bottom: 1px solid black;">
+                    <div><strong>Iwon8: </strong>Hallo!</div>
+                </div>
+                <input class="chatInput" placeholder="Guess or message here">
+            </div>
+        </div>
+    </div>
     <h1>Current drawer is: <span id="currentDrawer"></span></h1>
     <h1>Time left: <span id="timeLeft"></span></h1>
 </body>
@@ -19,7 +49,6 @@
 
 
 <script>
-
     function getUrlVars()
     {
         var vars = [], hash;
@@ -31,6 +60,8 @@
         }
         return vars;
     }
+
+
 </script>
 
 <script src="js/game/objects_new.js"></script>

@@ -29,7 +29,7 @@ socket.on('server_new_dot', function(data) {
 
 socket.on('server_create_line', function(data) {
     line.graphics.beginStroke(data.color).setStrokeStyle(data.size).moveTo(data.x, data.y);
-    circle.graphics.beginFill(data.color).drawCircle(data.x, data.y, data.size / 2);
+    circle.graphics.beginFill(selectedColor).drawCircle(line.graphics._activeInstructions[line.graphics._activeInstructions.length - 1].x, line.graphics._activeInstructions[line.graphics._activeInstructions.length - 1].y, selectedSize / 2);
 });
 
 socket.on('server_next_line_to', function(data) {
@@ -38,13 +38,41 @@ socket.on('server_next_line_to', function(data) {
     line.graphics.lineTo(data.x, data.y);
 });
 
-socket.on('server_end_line', function(data) {
-    circle.graphics.beginFill(data.color).drawCircle(data.x, data.y, data.size / 2);
+socket.on('server_end_line', function() {
+    circle.graphics.beginFill(selectedColor).drawCircle(line.graphics._activeInstructions[line.graphics._activeInstructions.length - 1].x, line.graphics._activeInstructions[line.graphics._activeInstructions.length - 1].y, selectedSize / 2);
     line.graphics.endStroke();
 });
 
+socket.on('server_send_message', function(data) {
+    $('.chat').append('<div><strong>' + data.username + ': </strong>' + data.message + '</div>');
+});
+
 socket.on('server_send_information', function(data) {
-    console.log(data);
+    if(data.nextTurn == 1) {
+        mouseDown = 0;
+        stage.removeAllChildren();
+        line = new createjs.Shape();
+        circle = new createjs.Shape();
+        stage.addChild(circle);
+        stage.addChild(line);
+        stage.update();
+    }
     $('#currentDrawer').html(data.currentDrawer);
     $('#timeLeft').html(data.timeLeft);
+
+    var players = $('.players');
+
+    players.html('<h2 style="margin: 0; border-bottom: 1px solid black">Players</h2>');
+
+    for(i = 0; i < data.players.length; i++) {
+        players.append('<div class="col-sm-12" style="border-bottom: 1px solid black">' + data.players[i].username +
+            '<br><span style="font-weight: bold;">Status:</span> ' + data.players[i].status + '</div>');
+    }
+});
+
+$(document).keypress(function(e) {
+    if(e.which == 13) {
+        socket.emit('client_send_message', {"gameid" : id, "message" : $('.chatInput').val()});
+        $('.chatInput').val('');
+    }
 });
