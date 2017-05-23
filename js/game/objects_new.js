@@ -4,7 +4,9 @@
 
 console.log("Objects.js loaded"); // check if loaded
 var canvas = $( "#canvas" );
-var selectedColor = "DeepSkyBlue";
+var selectedColor = "black";
+var currentDrawer = "";
+$('.currentColor').html(selectedColor);
 var selectedSize = 10;
 var mouseDown = 0;
 var canDraw = 1;
@@ -31,7 +33,6 @@ canvas.on("mousedown", function(e) {
 canvas.on("mouseup", function(e) {
     if(drawPermitted == 1) {
         mouseDown = 0;
-        circle.graphics.beginFill(selectedColor).drawCircle(line.graphics._activeInstructions[line.graphics._activeInstructions.length - 1].x, line.graphics._activeInstructions[line.graphics._activeInstructions.length - 1].y, selectedSize / 2);
         line.graphics.endStroke();
         socket.emit('client_end_line', {"gameid": id, "color": selectedColor, "x": e.pageX - (e.pageX - e.offsetX), "y": e.pageY - (e.pageY - e.offsetY), "size": selectedSize});
     }
@@ -51,7 +52,7 @@ canvas.on("mousemove", function(e) {
 function timeout() {
     setTimeout(function() {
         canDraw = 1;
-    }, 25);
+    }, 20);
 }
 
 function update() {
@@ -60,7 +61,7 @@ function update() {
 setInterval(update, 10);
 
 function hasPermission() {
-    if(username == $('#currentDrawer').html()) {
+    if(username == currentDrawer) {
         drawPermitted = 1;
     } else {
         drawPermitted = 0;
@@ -70,4 +71,10 @@ setInterval(hasPermission, 100);
 
 function changeColor(col) {
     selectedColor = col;
+    $('.currentColor').html(col);
 }
+
+function scrollDownChat() {
+    $('.chat').scrollTop($('.chat')[0].scrollHeight);
+}
+setInterval(scrollDownChat, 10);

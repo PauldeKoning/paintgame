@@ -57,8 +57,15 @@ socket.on('server_send_information', function(data) {
         stage.addChild(line);
         stage.update();
     }
-    $('#currentDrawer').html(data.currentDrawer);
-    $('#timeLeft').html(data.timeLeft);
+    currentDrawer = data.currentDrawer;
+    actualTimeLeft = 65 - data.timeLeft;
+    $('.timeLeft').html(actualTimeLeft);
+    if(data.currentDrawer == username) {
+        $('.wordSentence').html('You need to draw: <span class="currentWord" style="font-weight: bold;"></span>');
+        $('.currentWord').html(data.currentWord);
+    } else {
+        $('.wordSentence').html('');
+    }
 
     var players = $('.players');
 
@@ -66,7 +73,7 @@ socket.on('server_send_information', function(data) {
 
     for(i = 0; i < data.players.length; i++) {
         players.append('<div class="col-sm-12" style="border-bottom: 1px solid black">' + data.players[i].username +
-            '<br><span style="font-weight: bold;">Status:</span> ' + data.players[i].status + '</div>');
+            '<br><span style="font-weight: bold;">Points: </span>' + data.players[i].points + '<br><span style="font-weight: bold;">Status:</span> ' + data.players[i].status + '</div>');
     }
 });
 

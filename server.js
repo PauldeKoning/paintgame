@@ -7,8 +7,17 @@ var http = require('http');
 var fileExists = require('file-exists');
 var server = http.createServer(app);
 var io = require('socket.io')(server);
-var port = 255;
+var fs = require('file-system');
+var port = 80;
+var serverid = 0;
 var games = [];
+var words = [];
+
+fs.readFile('words.txt', 'utf8', function(err, data) {
+    if (err) throw err;
+    console.log('Words have been found and are loading into array...');
+    words = data.split(',');
+});
 
 app.use('/css', express.static(__dirname + '/css'));
 app.use('/js', express.static(__dirname + '/js'));
@@ -38,6 +47,7 @@ io.on('connection', function(client) {
         games.push(new Game());
         io.to(client.id).emit('server_join_game_link', {"status" : "success", "link" : "/game.html?id=" + (games.length - 1)});
         console.log("New Game Made");
+        serverid++;
     });
     client.on('client_join_game', function(data) {
         if(data !== "") {
@@ -45,7 +55,6 @@ io.on('connection', function(client) {
             for (i = 0; i < games.length; i++) {
                 if (games[i].id == data) {
                     io.to(client.id).emit('server_join_game_link', {"status": "success", "link": "/game.html?id=" + data});
-                    console.log("User Is Joining a Game");
                     joined = 1;
                 }
             }
@@ -67,8 +76,7 @@ io.on('connection', function(client) {
                     }
                 }
                 if(usernameTaken == 0) {
-                    games[i].players.push({"clientid" : client.id, "username" : data.username, "status" : "Waiting"});
-                    console.log("User Joined Game");
+                    games[i].players.push({"clientid" : client.id, "username" : data.username, "status" : "Waiting", "justJoined" : 1, "points" : 0, "hasGuessed" : 0});
                 } else {
                     io.to(client.id).emit('server_send_error', {"message": "Username is already taken..."});
                 }
@@ -132,15 +140,29 @@ io.on('connection', function(client) {
                         username = games[i].players[j].username;
                     }
                 }
-                for(j = 0; j < games[i].players.length; j++) {
-                    io.to(games[i].players[j].clientid).emit('server_send_message', {"username" : username, "message" : data.message});
+                if(data.message !== "") {
+                    if(data.message == games[i].currentWord) {
+                        if(client.id !== games[i].currentDrawer.clientid) {
+                            for (j = 0; j < games[i].players.length; j++) {
+                                if(games[i].players[j].clientid == client.id && games[i].players[j].hasGuessed == 0 && games[i].drawTimer <= 60) {
+                                    io.to(games[i].players[j].clientid).emit('server_send_message', {"username": "SERVER", "message": username + " has guessed the word!"});
+                                    games[i].players[j].points = games[i].players[j].points + 60 - games[i].drawTimer;
+                                    games[i].players[j].hasGuessed = 1;
+                                }
+                            }
+                        }
+                    } else {
+                        for (j = 0; j < games[i].players.length; j++) {
+                            io.to(games[i].players[j].clientid).emit('server_send_message', {"username": username, "message": data.message});
+                        }
+                    }
                 }
             }
         }
     });
     client.on('disconnect', function() {
         for (i = 0; i < games.length; i++) {
-            for(j = 0; j < games[i].players.length; j++) {
+            for(j = games[i].players.length - 1; j >= 0; j--) {
                 if(games[i].players[j].clientid == client.id) {
                     games[i].players.splice(j, 1);
                 }
@@ -150,36 +172,60 @@ io.on('connection', function(client) {
 });
 
 function sendInformationAndUpdate() {
-    for(i = 0; i < games.length; i++) {
-        if(games[i].currentDrawer.username == "none") {
-            if(games[i].players.length > 0) {
-                games[i].currentDrawer = games[i].players[0];
-                games[i].players[0].status = "Drawing";
-                games[i].lastPlayer = 0;
-            }
+    for(i = games.length - 1; i >= 0; i--) {
+        if(games[i].players.length == 0 && games[i].currentDrawer.username !== "none") {
+            games.splice(i, 1);
         }
+    }
+    for(i = 0; i < games.length; i++) {
         var nextTurn = 0;
-        if(games[i].drawTimer >= 10) {
-            nextTurn = 1;
-            if(games[i].currentDrawer.clientid == games[i].players[games[i].players.length - 1].clientid) {
-                games[i].lastPlayer = 0;
-            } else {
-                games[i].lastPlayer++;
+        if(games[i].drawTimer >= 60) {
+            for (j = 0; j < games[i].players.length; j++) {
+                games[i].players[j].status = "Waiting";
+                games[i].players[j].justJoined = 1;
             }
-            games[i].currentDrawer = games[i].players[games[i].lastPlayer];
-            games[i].players[games[i].lastPlayer].status = "Drawing";
-            games[i].drawTimer = 0;
+            if (games[i].drawTimer >= 65) {
+                games[i].currentWord = words[Math.floor(Math.random() * words.length - 1)];
+                for (j = 0; j < games[i].players.length; j++) {
+                    games[i].players[j].justJoined = 0;
+                    games[i].players[j].hasGuessed = 0;
+                }
+                if (games[i].currentDrawer.username == "none") {
+                    if (games[i].players.length > 0) {
+                        games[i].currentDrawer = games[i].players[0];
+                        games[i].players[0].status = "Drawing";
+                        games[i].lastPlayer = 0;
+                        games[i].lastPlayerLength = games[i].players.length;
+                    }
+                }
+                nextTurn = 1;
+                if (games[i].players.length == 0) {
+                    games[i].currentDrawer.username = ""; // make something different than none to delete
+                    break;
+                } else if (games[i].lastPlayerLength > games[i].players.length) {
+                    games[i].lastPlayer = 0;
+                } else if (games[i].currentDrawer.clientid == games[i].players[games[i].players.length - 1].clientid) {
+                    games[i].lastPlayer = 0;
+                } else {
+                    games[i].lastPlayer++;
+                }
+                games[i].currentDrawer = games[i].players[games[i].lastPlayer];
+                games[i].players[games[i].lastPlayer].status = "Drawing";
+                games[i].drawTimer = 0;
+                games[i].lastPlayerLength = games[i].players.length;
+            }
         }
         games[i].drawTimer++;
 
         for(j = 0; j < games[i].players.length; j++) {
-            if(games[i].players[j].username !== games[i].currentDrawer.username) {
+            if(games[i].players[j].username !== games[i].currentDrawer.username && games[i].currentDrawer.username !== "none" && games[i].players[j].justJoined == 0) {
                 games[i].players[j].status = "Guessing"
             }
             io.to(games[i].players[j].clientid).emit('server_send_information',
                 {"currentDrawer" : games[i].currentDrawer.username,
                     "timeLeft" : games[i].drawTimer,
                     "nextTurn" : nextTurn,
+                    "currentWord" : games[i].currentWord,
                     "players" : games[i].players
                 });
         }
@@ -189,10 +235,12 @@ function sendInformationAndUpdate() {
 setInterval(sendInformationAndUpdate, 1000);
 
 function Game() {
-    this.id = games.length;
+    this.id = serverid;
     this.players = [];
     this.currentDrawer = {"username" : "none"};
-    this.drawTimer = 0;
+    this.drawTimer = 45;
     this.lastPlayer = 0;
+    this.lastPlayerLength = 0;
+    this.currentWord = "";
 }
 
