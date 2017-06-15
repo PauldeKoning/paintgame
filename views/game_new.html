@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/game.css" rel="stylesheet">
+    <script src="js/easeljs.combined.js"></script>
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <title>Index</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row" style="height: 50px; border-bottom: 1px solid black;">
+        Text will go here
+    </div>
+    <div class="row no-gutters main_row" style="padding: 0; border-bottom: 1px solid black;">
+        <div class="col-md-10 game_col" style="padding: 0; height: 100%; border-right: 1px solid black;">
+            game
+        </div>
+        <div class="col-md-2 players_col" style="padding: 0;">
+            Players
+        </div>
+    </div>
+    <div class="row no-gutters " style="padding: 0; height: 50px;">
+        <div class="col-md-5" style="padding: 0; height: 100%; border-right: 1px solid black;">
+            Colors will go here
+        </div>
+        <div class="col-md-5" style="padding: 0; height: 100%; border-right: 1px solid black;">
+            <div class="width_selector" style="width: 25%; display: inline-block;">
+                Small
+            </div>
+            <div class="width_selector" style="width: 25%; display: inline-block;">
+                Normal
+            </div>
+            <div class="width_selector" style="width: 25%; display: inline-block;">
+                Big
+            </div>
+            <div class="width_selector" style="width: 23%; display: inline-block;">
+                Biggest
+            </div>
+        </div>
+        <div class="col-md-2" style="padding: 0; height: 100%;">
+            row1
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+<script>
+    function getUrlVars()
+    {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+
+    function changeHeight() {
+        $('.main_row').css('height', window.innerHeight - 100);
+    }
+    changeHeight();
+
+</script>
+
+<!--
+<script src="js/game/objects_new.js"></script>
+<script src="js/game/online.js"></script>

@@ -13,22 +13,37 @@
 <body>
     <div class="container-fluid" >
         <div class="row" style="margin: auto auto">
-            <div class="col-sm-8 wordSentence" style="height: 50px; border-left: 1px solid black; width: 600px; text-align: center; font-size: 26pt;">You need to draw: <span class="currentWord" style="font-weight: bold;"></span></div>
-            <div class="col-sm-2" style="height: 50px; border-left: 1px solid black; padding: 0; text-align: center; font-size: 16pt;">Current Color: <span class="currentColor" style="font-weight: bold;"></span></div>
+            <div class="col-sm-8 wordSentence" style="height: 50px; border-left: 1px solid black; width: 600px; text-align: center; font-size: 26pt;"><span class="currentWord" style="font-weight: bold;"></span></div>
+            <div class="col-sm-2" style="height: 50px; border-left: 1px solid black; padding: 0; text-align: center; font-size: 14pt;">Current Color: <span class="currentColor" style="font-weight: bold;"></span></div>
             <div class="col-sm-2" style="height: 50px; border-left: 1px solid black; border-right: 1px solid black; padding: 0; text-align: center; font-size: 16pt;">Time left: <span class="timeLeft" style="font-weight: bold;"></span></div>
         </div>
         <div class="row" style="margin: auto auto">
             <div class="colcanvas col-sm-4" style="border-top: 1px solid black; border-left: 1px solid black;"><canvas id="canvas" height="600" width="600"></canvas></div>
             <div class="canheight col-sm-2" id="colorsDiv" style="border: 1px solid black; border-right: 0; padding: 0; text-align: center;">
-                <h2 style="margin: 0; border-bottom: 1px solid black">Color</h2>
-                <div class="col-sm-12" onclick="changeColor('black')" style="border-bottom: 1px solid black; background-color: black; height: 70px;"></div>
-                <div class="col-sm-12" onclick="changeColor('red')" style="border-bottom: 1px solid black; background-color: red; height: 70px;"></div>
-                <div class="col-sm-12" onclick="changeColor('green')" style="border-bottom: 1px solid black; background-color: green; height: 70px;"></div>
-                <div class="col-sm-12" onclick="changeColor('blue')" style="border-bottom: 1px solid black; background-color: blue; height: 70px;"></div>
-                <div class="col-sm-12" onclick="changeColor('yellow')" style="border-bottom: 1px solid black; background-color: yellow; height: 70px;"></div>
-                <div class="col-sm-12" onclick="changeColor('sandybrown')" style="border-bottom: 1px solid black; background-color: sandybrown; height: 70px;"></div>
-                <div class="col-sm-12" onclick="changeColor('brown')" style="border-bottom: 1px solid black; background-color: brown; height: 70px;"></div>
-                <div class="col-sm-12" onclick="changeColor('white')" style="height: 75px;"><h2>Eraser</h2></div>
+                <div class="colors" style="height: 350px;">
+                    <h2 style="margin: 0; border-bottom: 1px solid black">Color</h2>
+                    <div class="colorsPick" style="overflow-y: scroll; height: 320px;">
+                        <div class="colorpicker col-sm-12" onclick="changeColor('black')" style="background-color: black;"></div>
+                        <div class="colorpicker col-sm-12" onclick="changeColor('red')" style="background-color: red;"></div>
+                        <div class="colorpicker col-sm-12" onclick="changeColor('green')" style=" background-color: green;"></div>
+                        <div class="colorpicker col-sm-12" onclick="changeColor('blue')" style="background-color: blue;"></div>
+                        <div class="colorpicker col-sm-12" onclick="changeColor('yellow')" style="background-color: yellow;"></div>
+                        <div class="colorpicker col-sm-12" onclick="changeColor('orange')" style="background-color: orange;"></div>
+                        <div class="colorpicker col-sm-12" onclick="changeColor('sandybrown')" style="background-color: sandybrown;"></div>
+                        <div class="colorpicker col-sm-12" onclick="changeColor('brown')" style="background-color: brown;"></div>
+                        <div class="colorpicker col-sm-12" onclick="changeColor('grey')" style="background-color: grey;"></div>
+                        <div class="col-sm-12" onclick="changeColor('white')" style="height: 28px;"><h5 style="margin-top: 2px;">Eraser</h5></div>
+                    </div>
+                </div>
+                <div class="colors" style="height: 250px; border-top: 1px solid black;">
+                    <h2 style="margin: 0; border-bottom: 1px solid black">Width</h2>
+                    <div class="widthPick" style="overflow-y: scroll; height: 216px;">
+                        <div class="col-sm-12" onclick="changeWidth(5)" style="border-bottom: 1px solid black;  height: 30px;">Small</div>
+                        <div class="col-sm-12" onclick="changeWidth(10)" style="border-bottom: 1px solid black; height: 40px;">Normal</div>
+                        <div class="col-sm-12" onclick="changeWidth(20)" style="border-bottom: 1px solid black; height: 70px;">Big</div>
+                        <div class="col-sm-12" onclick="changeWidth(40)" style="border-bottom: 1px solid black; height: 75px;">Biggest</div>
+                    </div>
+                </div>
             </div>
             <div class="canheight col-sm-2 playerdiv" style="border: 1px solid black; padding: 0; text-align: center;">
                 <div class="players">
@@ -60,6 +75,6 @@
 
 </script>
 
-
+<!--
 <script src="js/game/objects_new.js"></script>
 <script src="js/game/online.js"></script>

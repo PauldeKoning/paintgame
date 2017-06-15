@@ -28,18 +28,15 @@ socket.on('server_new_dot', function(data) {
 });
 
 socket.on('server_create_line', function(data) {
-    line.graphics.beginStroke(data.color).setStrokeStyle(data.size).moveTo(data.x, data.y);
-    circle.graphics.beginFill(selectedColor).drawCircle(line.graphics._activeInstructions[line.graphics._activeInstructions.length - 1].x, line.graphics._activeInstructions[line.graphics._activeInstructions.length - 1].y, selectedSize / 2);
+    line.graphics.beginStroke(data.color).setStrokeStyle(data.size, "round", "round").moveTo(data.x, data.y);
 });
 
 socket.on('server_next_line_to', function(data) {
-    line.graphics._oldStrokeStyle = data.size;
-    circle.graphics.beginFill(data.color).drawCircle(data.x, data.y, data.size / 2);
+    line.graphics._oldStrokeStyle = {"caps" : "round", "joints" : "round", "width" : data.size};
     line.graphics.lineTo(data.x, data.y);
 });
 
 socket.on('server_end_line', function() {
-    circle.graphics.beginFill(selectedColor).drawCircle(line.graphics._activeInstructions[line.graphics._activeInstructions.length - 1].x, line.graphics._activeInstructions[line.graphics._activeInstructions.length - 1].y, selectedSize / 2);
     line.graphics.endStroke();
 });
 
@@ -58,9 +55,17 @@ socket.on('server_send_information', function(data) {
         stage.update();
     }
     currentDrawer = data.currentDrawer;
-    actualTimeLeft = 65 - data.timeLeft;
+    if(data.timeLeft < 60) {
+        actualTimeLeft = 60 - data.timeLeft;
+    } else {
+        actualTimeLeft = 65 - data.timeLeft;
+    }
     $('.timeLeft').html(actualTimeLeft);
-    if(data.currentDrawer == username) {
+
+    if(data.timeLeft > 60 && data.currentWord !== "") {
+        $('.wordSentence').html('The word was: <span class="currentWord" style="font-weight: bold;"></span>');
+        $('.currentWord').html(data.currentWord);
+    } else if(data.currentDrawer == username) {
         $('.wordSentence').html('You need to draw: <span class="currentWord" style="font-weight: bold;"></span>');
         $('.currentWord').html(data.currentWord);
     } else {

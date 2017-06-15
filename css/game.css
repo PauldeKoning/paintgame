@@ -39,3 +39,8 @@
 ::-webkit-scrollbar {
     display: none;
 }
+
+.colorpicker {
+    border-bottom: 1px solid black;
+    height: 32px;
+}
