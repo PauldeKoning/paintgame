@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="/css/w3.css" rel="stylesheet">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.cookie.js"></script>
+    <script src="/js/easeljs.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>GameUI</title>
+</head>
+<body style="background-image: url('/img/background.jpg');">
+
+<div class="w3-display-middle w3-light-gray w3-border w3-border-gray" style="width: 80%; height: 80%;">
+    <!--
+    <div class="w3-bar w3-light-gray w3-wide" style="height: 40px; display: flex; align-items: center; justify-content: center;">
+        <div class="w3-col m2 w3-border-top w3-border-gray">
+            fdsf
+        </div>
+        <div class="w3-col m8 w3-blue" >
+
+        </div>
+        <div class="w3-col m2 w3-border-top w3-border-gray">
+            dassadas
+        </div>
+    </div>
+    -->
+    <div class="w3-row" style="height: 40px;">
+        <div class="w3-col m2" style="display: flex; align-items: center; justify-content: center; height: 40px; font-weight: bold; width: 200px;">
+            Players
+        </div>
+        <div class="w3-col m8" style="display: flex; align-items: center; justify-content: center; height: 40px; font-weight: bold; width: calc(100% - 400px);">
+            <div class="w3-wide w3-large">
+                TESTING
+            </div>
+        </div>
+        <div class="w3-col m2" style="display: flex; align-items: center; justify-content: center; height: 40px; font-weight: bold; width: 200px;">
+            Chat
+        </div>
+    </div>
+    <div class="w3-row" style="height: calc(100% - 40px);">
+        <div class="w3-col m2 w3-border-top w3-border-gray" style="width: 200px; height: 100%;">
+            <div style="height: 100%;">
+                <div id="scoreboard" style="height: calc(100% - 183px); overflow: scroll;">
+                </div>
+                <div id="tools" class="w3-border-top w3-border-gray" style="height: 183px;">
+                    <div>
+                        <div class="w3-large w3-border-bottom w3-row">
+                            <div id="selectedColour" class="w3-col" style="width: 27px; height: 27px; background-color: black;"></div>
+                            <div class="w3-col w3-center" style="width: 144px;">Tools</div>
+                            <div class="w3-col" style="width: 27px; height: 27px; "></div>
+                        </div>
+                        <div class="w3-row">
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #f44336;" onclick="game.setColour('#f44336');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #3f51b5;" onclick="game.setColour('#3f51b5');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #87CEEB;" onclick="game.setColour('#87CEEB');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #00ffff;" onclick="game.setColour('#00ffff');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #4CAF50;" onclick="game.setColour('#4CAF50');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #cddc39;" onclick="game.setColour('#cddc39');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #f0e68c;" onclick="game.setColour('#f0e68c');"></div>
+
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #fdf5e6;" onclick="game.setColour('#fdf5e6');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #ff5722;" onclick="game.setColour('#ff5722');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #673ab7;" onclick="game.setColour('#673ab7');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #2196F3;" onclick="game.setColour('#2196F3');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #00bcd4;" onclick="game.setColour('#00bcd4');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #009688;" onclick="game.setColour('#009688');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #8bc34a;" onclick="game.setColour('#8bc34a');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #616161;" onclick="game.setColour('#616161');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: black;" onclick="game.setColour('black');"></div>
+
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #ff9800;" onclick="game.setColour('#ff9800');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #ffc107;" onclick="game.setColour('#ffc107');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #ffeb3b;" onclick="game.setColour('#ffeb3b');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #ddffdd;" onclick="game.setColour('#ddffdd');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #ffdddd;" onclick="game.setColour('#ffdddd');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #9e9e9e;" onclick="game.setColour('#9e9e9e');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: #795548;" onclick="game.setColour('#795548');"></div>
+                            <div class="w3-col" style="width: 25px; height: 25px; background-color: white;" onclick="game.setColour('white');"></div>
+                        </div>
+                        <div class="w3-row w3-padding-16" style="padding-left: 2%;">
+                            <div class="w3-col" style="height: 50px; width: 48px;">
+                                <div class="w3-display-container" style="height: 48px; width: 48px;" onclick="game.width = 4;">
+                                    <div class="w3-display-middle">
+                                        <i class="fa fa-circle"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w3-col" style="height: 50px; width: 48px;">
+                                <div class="w3-display-container" style="height: 48px; width: 48px; font-size: 22px;" onclick="game.width = 8;">
+                                    <div class="w3-display-middle">
+                                        <i class="fa fa-circle"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w3-col" style="height: 50px; width: 48px;">
+                                <div class="w3-display-container" style="height: 48px; width: 48px; font-size: 34px;" onclick="game.width = 16;">
+                                    <div class="w3-display-middle">
+                                        <i class="fa fa-circle"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w3-col" style="height: 50px; width: 48px;">
+                                <div class="w3-display-container" style="height: 48px; width: 48px; font-size: 44px;"  onclick="game.width = 24;">
+                                    <div class="w3-display-middle">
+                                        <i class="fa fa-circle"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w3-col m8 w3-blue" style="width: calc(100% - 400px); height: 100%;">
+
+        </div>
+        <div id="chat"  class="w3-col m2 w3-border-top w3-border-gray w3-display-container" style="width: 200px; height: 100%; overflow: hidden;">
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    const DrawingTools = function() {
+        this.tools = $('#tools');
+        this.showTools = function() {
+            this.tools.removeClass('w3-hide');
+            scoreboard.scoreboardDOM.css('height', 'calc(100% - 183px)');
+        };
+        this.removeTools = function() {
+            this.tools.addClass('w3-hide');
+            scoreboard.scoreboardDOM.css('height', '100%');
+        };
+    };
+
+    const drawingTools = new DrawingTools();
+
+    const Scoreboard = function() {
+        this.scoreboardDOM = $('#scoreboard');
+        this.players = [
+            {username : "test1", score : 100},
+            {username : "test2", score : 150},
+            {username : "test3", score : 50},
+            {username : "test4", score : 110},
+            {username : "test5", score : 300},
+            {username : "test6", score : 500},
+            {username : "test7", score : 5},
+            {username : "test1", score : 100},
+            {username : "test4", score : 110},
+            {username : "test5", score : 300},
+            {username : "test6", score : 500},
+            {username : "test7", score : 5},
+            {username : "test1", score : 100},
+
+
+        ];
+        this.playersSorted = [];
+        this.sortPlayers = function() {
+
+            const players = this.players;
+            const playersLength = players.length;
+            let currentPosition = 0;
+            for(let i = 0; i < playersLength; i++) {
+                let highestNumber = -1;
+                let currentHighest = -1;
+                for(let k in players) {
+                    if(players[k].score > highestNumber) {
+                        currentHighest = k;
+                        highestNumber = players[k].score;
+                    }
+                }
+                this.playersSorted[currentPosition] = players[currentHighest];
+                players.splice(currentHighest, 1);
+                currentPosition++;
+            }
+
+            /*
+            for(let i in this.players) {
+                let highestPosition = -1;
+                for(let k in this.playersSorted) {
+                    console.log(this.players[i].score + " - " + this.playersSorted[k].score);
+                    if(this.players[i].score > this.playersSorted[k].score) {
+                        highestPosition = k;
+                    } else {
+                        break;
+                    }
+                }
+                if(highestPosition > -1) {
+                    this.playersSorted.unshift(this.players[i]);
+                } else {
+                    this.playersSorted.push(this.players[i]);
+                }
+            }
+            */
+
+            let highestNow = this.playersSorted[0].score;
+            let positionNow = 1;
+            for(let i in this.playersSorted) {
+                if(this.playersSorted[i].score === highestNow) {
+                    this.playersSorted[i].position = positionNow;
+                } else {
+                    positionNow++;
+                    highestNow = this.playersSorted[i].score;
+                    this.playersSorted[i].position = positionNow;
+                }
+            }
+        };
+        this.update = function() {
+            this.scoreboardDOM.html('');
+            for(let i in this.playersSorted) {
+                const string =
+                    '<div class="w3-border-bottom w3-border-gray">' +
+                    '   <table class="w3-center hunwidth">' +
+                    '       <tr>' +
+                    '           <td class="w3-bold number">' +
+                    '               #' + this.playersSorted[i].position +
+                    '           </td>' +
+                    '           <td class="name">' +
+                    '               <div>' + this.playersSorted[i].username + '</div>' +
+                    '               <div class="pointsstyle">Points: <b>' + this.playersSorted[i].score + '</b></div>' +
+                    '           </td>' +
+                    '       </tr>' +
+                    '   </table>' +
+                    '</div>';
+                this.scoreboardDOM.append(string);
+            }
+        };
+    };
+
+    const scoreboard = new Scoreboard();
+    scoreboard.sortPlayers();
+    scoreboard.update();
+</script>
+
+<style>
+    .hunwidth {
+        width: 100%;
+    }
+    .number {
+        width: 20%;
+        font-weight: bold;
+    }
+    .pointsstyle {
+        font-size: 10pt;
+    }
+    .name {
+        width: 80%;
+    }
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    #chat::-webkit-scrollbar {
+        display: none;
+    }
+    .chatMessage {
+        padding-left: 2.5%;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 10pt;
+    }
+</style>

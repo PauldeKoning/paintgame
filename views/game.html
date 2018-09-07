@@ -2,79 +2,199 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/game.css" rel="stylesheet">
-    <script src="js/easeljs.combined.js"></script>
-    <script src="js/jquery-3.1.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <title>Index</title>
+    <link href="/css/w3.css" rel="stylesheet">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.cookie.js"></script>
+    <script src="/js/easeljs.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Game</title>
 </head>
-<body>
-    <div class="container-fluid" >
-        <div class="row" style="margin: auto auto">
-            <div class="col-sm-8 wordSentence" style="height: 50px; border-left: 1px solid black; width: 600px; text-align: center; font-size: 26pt;"><span class="currentWord" style="font-weight: bold;"></span></div>
-            <div class="col-sm-2" style="height: 50px; border-left: 1px solid black; padding: 0; text-align: center; font-size: 14pt;">Current Color: <span class="currentColor" style="font-weight: bold;"></span></div>
-            <div class="col-sm-2" style="height: 50px; border-left: 1px solid black; border-right: 1px solid black; padding: 0; text-align: center; font-size: 16pt;">Time left: <span class="timeLeft" style="font-weight: bold;"></span></div>
+<body onload="game.init();">
+
+
+<div class="w3-display-middle w3-border w3-light-gray w3-border-gray" style="width: 80%; height: 80%;">
+    <!--
+    <div class="w3-bar w3-light-gray w3-wide" style="height: 40px; display: flex; align-items: center; justify-content: center;">
+        <div class="w3-col m2 w3-border-top w3-border-gray">
+            fdsf
         </div>
-        <div class="row" style="margin: auto auto">
-            <div class="colcanvas col-sm-4" style="border-top: 1px solid black; border-left: 1px solid black;"><canvas id="canvas" height="600" width="600"></canvas></div>
-            <div class="canheight col-sm-2" id="colorsDiv" style="border: 1px solid black; border-right: 0; padding: 0; text-align: center;">
-                <div class="colors" style="height: 350px;">
-                    <h2 style="margin: 0; border-bottom: 1px solid black">Color</h2>
-                    <div class="colorsPick" style="overflow-y: scroll; height: 320px;">
-                        <div class="colorpicker col-sm-12" onclick="changeColor('black')" style="background-color: black;"></div>
-                        <div class="colorpicker col-sm-12" onclick="changeColor('red')" style="background-color: red;"></div>
-                        <div class="colorpicker col-sm-12" onclick="changeColor('green')" style=" background-color: green;"></div>
-                        <div class="colorpicker col-sm-12" onclick="changeColor('blue')" style="background-color: blue;"></div>
-                        <div class="colorpicker col-sm-12" onclick="changeColor('yellow')" style="background-color: yellow;"></div>
-                        <div class="colorpicker col-sm-12" onclick="changeColor('orange')" style="background-color: orange;"></div>
-                        <div class="colorpicker col-sm-12" onclick="changeColor('sandybrown')" style="background-color: sandybrown;"></div>
-                        <div class="colorpicker col-sm-12" onclick="changeColor('brown')" style="background-color: brown;"></div>
-                        <div class="colorpicker col-sm-12" onclick="changeColor('grey')" style="background-color: grey;"></div>
-                        <div class="col-sm-12" onclick="changeColor('white')" style="height: 28px;"><h5 style="margin-top: 2px;">Eraser</h5></div>
+        <div class="w3-col m8 w3-blue" >
+
+        </div>
+        <div class="w3-col m2 w3-border-top w3-border-gray">
+            dassadas
+        </div>
+    </div>
+    -->
+    <div class="w3-row" style="height: 40px;">
+        <div class="w3-col m2" style="display: flex; align-items: center; justify-content: center; height: 40px; font-weight: bold; width: 200px;">
+            Players
+        </div>
+        <div class="w3-col m1" id="timer" style="display: flex; align-items: center; justify-content: center; height: 40px; font-weight: bold; width: 50px;">
+            60
+        </div>
+        <div class="w3-col m6" style="display: flex; align-items: center; justify-content: center; height: 40px; font-weight: bold; width: calc(100% - 500px);">
+            <div id="drawingWord" class="w3-wide w3-large">
+
+            </div>
+        </div>
+        <div class="w3-col m1" style="display: flex; align-items: center; justify-content: center; height: 40px; font-weight: bold; width: 50px;">
+
+        </div>
+        <div class="w3-col m2" style="display: flex; align-items: center; justify-content: center; height: 40px; font-weight: bold; width: 200px;">
+            Chat
+        </div>
+    </div>
+    <div class="w3-row" style="height: calc(100% - 40px);">
+        <div class="w3-col m2 w3-border-top w3-border-gray" style="width: 200px; height: 100%;">
+            <div class="w3-col m2 w3-border-top w3-border-gray" style="width: 200px; height: 100%;">
+                <div style="height: 100%;">
+                    <div id="scoreboard" style="height: calc(100% - 183px); overflow: scroll;">
                     </div>
-                </div>
-                <div class="colors" style="height: 250px; border-top: 1px solid black;">
-                    <h2 style="margin: 0; border-bottom: 1px solid black">Width</h2>
-                    <div class="widthPick" style="overflow-y: scroll; height: 216px;">
-                        <div class="col-sm-12" onclick="changeWidth(5)" style="border-bottom: 1px solid black;  height: 30px;">Small</div>
-                        <div class="col-sm-12" onclick="changeWidth(10)" style="border-bottom: 1px solid black; height: 40px;">Normal</div>
-                        <div class="col-sm-12" onclick="changeWidth(20)" style="border-bottom: 1px solid black; height: 70px;">Big</div>
-                        <div class="col-sm-12" onclick="changeWidth(40)" style="border-bottom: 1px solid black; height: 75px;">Biggest</div>
+                    <div id="tools" class="w3-border-top w3-border-gray" style="height: 183px;">
+                        <div>
+                            <div class="w3-large w3-border-bottom w3-row">
+                                <div id="selectedColour" class="w3-col" style="width: 27px; height: 27px; background-color: black;"></div>
+                                <div class="w3-col w3-center" style="width: 144px;">Tools</div>
+                                <div class="w3-col" style="width: 27px; height: 27px; "></div>
+                            </div>
+                            <div class="w3-row">
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #f44336;" onclick="game.setColour('#f44336');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #3f51b5;" onclick="game.setColour('#3f51b5');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #87CEEB;" onclick="game.setColour('#87CEEB');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #00ffff;" onclick="game.setColour('#00ffff');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #4CAF50;" onclick="game.setColour('#4CAF50');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #cddc39;" onclick="game.setColour('#cddc39');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #f0e68c;" onclick="game.setColour('#f0e68c');"></div>
+
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #fdf5e6;" onclick="game.setColour('#fdf5e6');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #ff5722;" onclick="game.setColour('#ff5722');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #673ab7;" onclick="game.setColour('#673ab7');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #2196F3;" onclick="game.setColour('#2196F3');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #00bcd4;" onclick="game.setColour('#00bcd4');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #009688;" onclick="game.setColour('#009688');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #8bc34a;" onclick="game.setColour('#8bc34a');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #616161;" onclick="game.setColour('#616161');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: black;" onclick="game.setColour('black');"></div>
+
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #ff9800;" onclick="game.setColour('#ff9800');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #ffc107;" onclick="game.setColour('#ffc107');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #ffeb3b;" onclick="game.setColour('#ffeb3b');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #ddffdd;" onclick="game.setColour('#ddffdd');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #ffdddd;" onclick="game.setColour('#ffdddd');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #9e9e9e;" onclick="game.setColour('#9e9e9e');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: #795548;" onclick="game.setColour('#795548');"></div>
+                                <div class="w3-col" style="width: 25px; height: 25px; background-color: white;" onclick="game.setColour('white');"></div>
+                            </div>
+                            <div class="w3-row w3-padding-16" style="padding-left: 2%;">
+                                <div class="w3-col" style="height: 50px; width: 48px;">
+                                    <div id="width6" class="w3-display-container" style="height: 48px; width: 48px;" onclick="game.setWidth(6);">
+                                        <div class="w3-display-middle">
+                                            <i class="fa fa-circle"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w3-col" style="height: 50px; width: 48px;">
+                                    <div id="width12" class="w3-display-container" style="height: 48px; width: 48px; font-size: 22px;" onclick="game.setWidth(12);">
+                                        <div class="w3-display-middle">
+                                            <i class="fa fa-circle"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w3-col" style="height: 50px; width: 48px;">
+                                    <div id="width24" class="w3-display-container" style="height: 48px; width: 48px; font-size: 34px;" onclick="game.setWidth(24);">
+                                        <div class="w3-display-middle">
+                                            <i class="fa fa-circle"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w3-col" style="height: 50px; width: 48px;">
+                                    <div id="width32" class="w3-display-container" style="height: 48px; width: 48px; font-size: 44px;"  onclick="game.setWidth(32);">
+                                        <div class="w3-display-middle">
+                                            <i class="fa fa-circle"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="canheight col-sm-2 playerdiv" style="border: 1px solid black; padding: 0; text-align: center;">
-                <div class="players">
-                    <h2 style="margin: 0; border-bottom: 1px solid black">Players</h2>
+        </div>
+        <div class="w3-col m8 w3-border-left w3-border-top w3-border-right w3-border-gray" style="width: calc(100% - 400px); height: 100%;">
+            <canvas style="width: 100%; height: 100%; background-color: white;" id="demoCanvas"></canvas>
+        </div>
+        <div id="chat"  class="w3-col m2 w3-border-top w3-border-gray w3-display-container" style="width: 200px; height: 100%; overflow: hidden;">
+            <div class="w3-display-bottommiddle" style="width: 100%;">
+                <div id="chatContent">
+
                 </div>
-                <div class="chat" style="text-align: left; border-top: 1px solid black; border-bottom: 1px solid black;">
+                <div class="w3-border-top w3-border-gray" style="padding-left: 2.5%; padding-top: 6px; padding-bottom: 6px;">
+                    <input id="chatInput" placeholder="Type guess here" class="w3-input w3-border" style="width: 97.5%; height: 30px;">
                 </div>
-                <input class="chatInput" placeholder="Guess or message here">
             </div>
         </div>
     </div>
+</div>
+
+<!--<canvas id="demoCanvas" width="1000" height="1000"></canvas> -->
+
 </body>
 </html>
 
+<script src="/js/scoreboard.js"></script>
+<script src="/js/chat.js"></script>
+<script src="/js/players.js"></script>
+<script src="/js/game.js"></script>
+<script src="/js/connection.js"></script>
+<script src="/js/drawingTools.js"></script>
 
 <script>
-    function getUrlVars()
-    {
-        var vars = [], hash;
-        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-        for(var i = 0; i < hashes.length; i++) {
-            hash = hashes[i].split('=');
-            vars.push(hash[0]);
-            vars[hash[0]] = hash[1];
+    const players = new Players();
+
+    const connection = new Connection();
+
+    const game = new Game();
+
+    const chat = new Chat();
+
+    const scoreboard = new Scoreboard();
+
+    const drawingTools = new DrawingTools();
+
+    $('#chatInput').keyup(function(e){
+        if(e.keyCode == 13)
+        {
+            connection.newGuess();
         }
-        return vars;
-    }
-
-
+    });
 </script>
 
-<!--
-<script src="js/game/objects_new.js"></script>
-<script src="js/game/online.js"></script>
+<style>
+
+
+    .hunwidth {
+        width: 100%;
+    }
+    .number {
+        width: 20%;
+        font-weight: bold;
+    }
+    .pointsstyle {
+        font-size: 10pt;
+    }
+    .name {
+        width: 80%;
+    }
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    .chatMessage {
+        padding-left: 2.5%;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 10pt;
+        word-wrap: break-word;
+    }
+</style>

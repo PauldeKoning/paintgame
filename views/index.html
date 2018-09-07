@@ -2,56 +2,73 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <script src="js/jquery-3.1.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <title>Index</title>
+    <link href="/css/w3.css" rel="stylesheet">
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <title>Homepage</title>
 </head>
-<body>
-<div class="container">
-    <div class="container" style="margin-bottom: 20px;">
-        <div class="form-group">
-            <label for="inputjoin">What game do you want to join?</label>
-            <input type="number" class="form-control" id="inputjoin" aria-describedby="emailHelp" placeholder="Enter game number">
-        </div>
-        <button id="buttonjoin" class="btn btn-primary" onclick="joinGame()">Enter Game</button>
+<body style="background-image: url('/img/background.jpg');">
+
+<div class="w3-display-middle w3-border w3-border-gray" style="width: 50%;">
+    <div class="w3-bar w3-light-gray">
+        <div id="buttonCreate" class="w3-bar-item w3-green w3-hover-green w3-button" style="width: 50%;">Create</div>
+        <div id="buttonJoin" class="w3-bar-item w3-button w3-hover-light-green" style="width: 50%;">Join</div>
     </div>
-    <div class="container">
-        <button id="buttoncreate" class="btn btn-primary" onclick="createGame()">Create Game</button>
+
+    <div class="w3-container w3-light-gray" style="height: 100px;">
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+            <div class="w3-row">
+                <div class="w3-col m10">
+                    <input id="codeInput" class="w3-input w3-border" title="code" name="code" placeholder="Join Code">
+                </div>
+                <div class="w3-col m2">
+                    <button id="inputSubmit" class="w3-button w3-green w3-hover-light-green w3-border w3-border-green w3-hover-border-light-green" style="width: 100%; ">--></button>
+                </div>
+            </div>
+            <div id="inputError" class="w3-text-red w3-center w3-hide">Something went wrong!</div>
+        </div>
     </div>
 </div>
+
 </body>
 </html>
 
 <script>
-    var socket = io.connect();
-    socket.on('server_join_game_link', function(data) {
-        if(data.status == "success") {
-            location.href = data.link;
-        } else if(data.status == "error") {
-            alert(data.message);
-            enableButtons();
-        }
-    });
+    const Homepage = function() {
+        this.buttonCreate = $('#buttonCreate');
+        this.buttonJoin = $('#buttonJoin');
+        this.codeInput = $('#codeInput');
+        this.inputSubmit = $('#inputSubmit');
+        this.inputError = $('#inputError');
+        this.socket = io.connect();
+        this.create = 1;
+        this.init = (function() {
+            this.buttonCreate.click(function() {
+                this.buttonJoin.addClass('w3-hover-light-green').removeClass('w3-green');
+                this.buttonCreate.addClass('w3-green w3-hover-green').removeClass('w3-hover-light-green');
+                this.create = 1;
+            }.bind(this));
+            this.buttonJoin.click(function() {
+                this.buttonCreate.addClass('w3-hover-light-green').removeClass('w3-green');
+                this.buttonJoin.addClass('w3-green w3-hover-green').removeClass('w3-hover-light-green');
+                this.create = 0;
+            }.bind(this));
+            this.inputSubmit.click(function() {
+                this.socket.emit('create_game', { name : this.codeInput.val(), create : this.create });
+            }.bind(this));
+            this.socket.on('create_game_callback', function(data) {
+                if(data.error) {
+                    this.inputError.html(data.error);
+                    this.inputError.removeClass('w3-hide');
+                    return;
+                }
+                location.href = data.url;
+            }.bind(this));
+        }.bind(this))();
+    };
 
-    function createGame() {
-        disableButtons();
-        socket.emit('client_create_game');
-    }
-
-    function joinGame() {
-        disableButtons();
-        socket.emit('client_join_game', $('#inputjoin').val());
-    }
-
-    function disableButtons() {
-        $('#buttoncreate').prop('disabled', true);
-        $('#buttonjoin').prop('disabled', true);
-    }
-
-    function enableButtons() {
-        $('#buttoncreate').prop('disabled', false);
-        $('#buttonjoin').prop('disabled', false);
-    }
+    const homepage = new Homepage();
 </script>
